@@ -1,0 +1,91 @@
+-- Made for educational purposes. Only works in supported executors.
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+local Window = Library:MakeWindow({Name = "🥚 Egg Finder | Grow A Garden", HidePremium = false, SaveConfig = true, ConfigFolder = "EggFinder"})
+
+-- Variables
+local eggNames = {"Egg", "Paradise Egg", "Rainbow Egg", "Mystery Egg"} -- Add actual egg names from game
+local ESPEnabled = true
+local AutoRandom = false
+
+-- ESP Function
+function createESP(object)
+    local Billboard = Instance.new("BillboardGui", object)
+    Billboard.Size = UDim2.new(0, 100, 0, 40)
+    Billboard.Adornee = object
+    Billboard.AlwaysOnTop = true
+
+    local Label = Instance.new("TextLabel", Billboard)
+    Label.Size = UDim2.new(1, 0, 1, 0)
+    Label.Text = "🥚 Egg Found"
+    Label.TextColor3 = Color3.new(1, 1, 0)
+    Label.BackgroundTransparency = 1
+end
+
+-- Scan for eggs
+function scanForEggs()
+    for , obj in pairs(workspace:GetDescendants()) do
+        if table.find(eggNames, obj.Name) then
+            if ESPEnabled and not obj:FindFirstChild("BillboardGui") then
+                createESP(obj)
+            end
+        end
+    end
+end
+
+-- Egg Randomizer
+function randomizeEggs()
+    for , obj in pairs(workspace:GetDescendants()) do
+        if table.find(eggNames, obj.Name) then
+            -- Do something, like teleport or interact (if possible)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = obj.CFrame
+            break
+        end
+    end
+end
+
+-- Auto Randomizer loop
+task.spawn(function()
+    while true do
+        if AutoRandom then
+            randomizeEggs()
+        end
+        task.wait(5)
+    end
+end)
+
+-- Tabs and Toggles
+local MainTab = Window:MakeTab({Name = "Main", Icon = "rbxassetid://4483345998", PremiumOnly = false})
+
+MainTab:AddToggle({
+    Name = "ESP: Egg Locator",
+    Default = true,
+    Callback = function(value)
+        ESPEnabled = value
+        if value then
+            scanForEggs()
+        end
+    end
+})
+
+MainTab:AddButton({
+    Name = "🔀 Randomize Eggs",
+    Callback = function()
+        randomizeEggs()
+    end
+})
+
+MainTab:AddToggle({
+    Name = "Auto Randomize (5s)",
+    Default = false,
+    Callback = function(value)
+        AutoRandom = value
+    end
+})
+
+MainTab:AddButton({
+    Name = "🔍 Rescan for Eggs",
+    Callback = function()
+        scanForEggs()
+    end
+})
