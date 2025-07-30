@@ -1,0 +1,142 @@
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Dummy maps/functions for now
+local truePetMap = { ["SomeEgg"] = "BestPet" } -- Replace with actual map
+local bestPets = { ["BestPet"] = true } -- Replace with actual best pets
+
+-- FUNCTIONS -------------------------------
+local function getPlayerGardenEggs(radius)
+	-- Replace with your actual egg-fetching logic
+	return workspace:GetDescendants()
+end
+
+local function applyEggESP(egg, petName)
+	if egg:FindFirstChild("ESP") then return end
+	local billboard = Instance.new("BillboardGui", egg)
+	billboard.Name = "ESP"
+	billboard.Size = UDim2.new(0, 100, 0, 20)
+	billboard.AlwaysOnTop = true
+
+	local label = Instance.new("TextLabel", billboard)
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.Text = petName or "Unknown"
+	label.TextColor3 = Color3.new(1, 1, 0)
+	label.TextSize = 14
+	label.Font = Enum.Font.GothamSemibold
+end
+
+local function removeEggESP(egg)
+	if egg:FindFirstChild("ESP") then
+		egg.ESP:Destroy()
+	end
+end
+
+local function countdownAndRandomize(btn)
+	btn.Text = "⏳ 15s Cooldown..."
+	btn.TextColor3 = Color3.fromRGB(255, 180, 0)
+	for i = 15, 1, -1 do
+		btn.Text = "⏳ Cooldown: " .. i .. "s"
+		wait(1)
+	end
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Text = "🎲 Randomize Pets"
+end
+
+-- GUI SETUP -------------------------------
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.Name = "Grow A Garden ShallTear Script"
+screenGui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 250, 0, 240)
+frame.Position = UDim2.new(0, 20, 0, 100)
+frame.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(60, 60, 60)
+stroke.Thickness = 1
+stroke.Transparency = 0.3
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 28)
+title.BackgroundTransparency = 1
+title.Text = "🌱 ShallTear Script"
+title.Font = Enum.Font.GothamSemibold
+title.TextSize = 15
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextXAlignment = Enum.TextXAlignment.Center
+
+-- BUTTON FUNCTION --------------------------
+local function createButton(text, yPos, callback)
+	local btn = Instance.new("TextButton", frame)
+	btn.Size = UDim2.new(1, -20, 0, 28)
+	btn.Position = UDim2.new(0, 10, 0, yPos)
+	btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	btn.Font = Enum.Font.GothamSemibold
+	btn.Text = text
+	btn.TextSize = 14
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.AutoButtonColor = true
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	btn.MouseButton1Click:Connect(function()
+		callback(btn)
+	end)
+	return btn
+end
+
+-- FLAGS
+local espEnabled = false
+local autoRunning = false
+
+-- RANDOMIZE BUTTON
+local randomizeBtn = createButton("🎲 Randomize Pets", 40, function(btn)
+	countdownAndRandomize(btn)
+end)
+
+-- ESP TOGGLE
+local toggleBtn = createButton("ESP: OFF", 75, function(btn)
+	espEnabled = not espEnabled
+	btn.Text = espEnabled and "ESP: ON" or "ESP: OFF"
+	for _, egg in pairs(getPlayerGardenEggs(60)) do
+		if espEnabled then
+			applyEggESP(egg, truePetMap[egg] or "Unknown")
+		else
+			removeEggESP(egg)
+		end
+	end
+end)
+
+-- AUTO RANDOMIZER
+local autoBtn = createButton("Auto Randomize: OFF", 110, function(btn)
+	autoRunning = not autoRunning
+	btn.Text = autoRunning and "Auto Randomize: ON" or "Auto Randomize: OFF"
+	coroutine.wrap(function()
+		while autoRunning do
+			countdownAndRandomize(randomizeBtn)
+			for _, petName in pairs(truePetMap) do
+				if bestPets[petName] then
+					autoRunning = false
+					btn.Text = "Auto Randomize: OFF"
+					return
+				end
+			end
+			wait(1)
+		end
+	end)()
+end)
+
+-- LOAD MUTATION ESP
+createButton("🧬 Pet Mutation ESP", 145, function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/shalltear-sama/scripts/main/growagarden/mutationESP.lua"))()
+end)
+
+-- LOAD AGE SPOOF
+createButton("🕑 Spoof Pet Age to 50", 180, function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/shalltear-sama/scripts/main/growagarden/petAge50.lua"))()
+end)
