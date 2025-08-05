@@ -1,65 +1,76 @@
---// LocalScript - Place this in StarterPlayerScripts or load via loadstring
+--// LocalScript - Place this in StarterPlayerScripts
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
 
 -- Create ScreenGui
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "GAG_TradeGUI"
+gui.Name = "RedOwl_Scripts"
 gui.ResetOnSpawn = false
+
+-- UI Corner Creator
+local function addUICorner(obj, radius)
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, radius)
+	corner.Parent = obj
+end
 
 -- Main Frame
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 200, 0, 120)
+frame.Size = UDim2.new(0, 220, 0, 140)
 frame.Position = UDim2.new(0.05, 0, 0.4, 0)
-frame.BackgroundColor3 = Color3.fromRGB(52, 73, 94)
+frame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
 frame.BorderSizePixel = 0
 frame.Name = "TradeOptions"
 frame.Active = true
 frame.Draggable = true
+addUICorner(frame, 12)
 
 -- Title
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 30)
 title.Position = UDim2.new(0, 0, 0, 0)
-title.Text = "BLOXIFIED"
+title.Text = "RedOwl Scripts"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.BackgroundTransparency = 1
-title.Font = Enum.Font.SourceSansBold
+title.Font = Enum.Font.GothamBold
 title.TextSize = 20
 
 -- Freeze Trade Toggle
 local freezeToggle = Instance.new("TextButton", frame)
-freezeToggle.Size = UDim2.new(0.9, 0, 0, 30)
+freezeToggle.Size = UDim2.new(0.9, 0, 0, 35)
 freezeToggle.Position = UDim2.new(0.05, 0, 0.35, 0)
-freezeToggle.Text = "Freeze Trade: OFF"
-freezeToggle.BackgroundColor3 = Color3.fromRGB(44, 62, 80)
+freezeToggle.Text = "❄️ Freeze Trade: OFF"
+freezeToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 freezeToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-freezeToggle.Font = Enum.Font.SourceSans
+freezeToggle.Font = Enum.Font.Gotham
 freezeToggle.TextSize = 16
+addUICorner(freezeToggle, 8)
 
 -- Auto Accept Toggle
 local autoToggle = Instance.new("TextButton", frame)
-autoToggle.Size = UDim2.new(0.9, 0, 0, 30)
-autoToggle.Position = UDim2.new(0.05, 0, 0.7, 0)
-autoToggle.Text = "Auto Accept: OFF"
-autoToggle.BackgroundColor3 = Color3.fromRGB(44, 62, 80)
+autoToggle.Size = UDim2.new(0.9, 0, 0, 35)
+autoToggle.Position = UDim2.new(0.05, 0, 0.65, 0)
+autoToggle.Text = "✅ Auto Accept: OFF"
+autoToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 autoToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-autoToggle.Font = Enum.Font.SourceSans
+autoToggle.Font = Enum.Font.Gotham
 autoToggle.TextSize = 16
+addUICorner(autoToggle, 8)
 
 -- Popup Label
 local popup = Instance.new("TextLabel", gui)
-popup.Size = UDim2.new(0.3, 0, 0.08, 0)
-popup.Position = UDim2.new(0.35, 0, 0.85, 0)
-popup.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
-popup.TextColor3 = Color3.fromRGB(255, 255, 255)
+popup.Size = UDim2.new(0.3, 0, 0.06, 0)
+popup.Position = UDim2.new(0.35, 0, 0.88, 0)
+popup.BackgroundColor3 = Color3.fromRGB(46, 204, 113)
+popup.TextColor3 = Color3.fromRGB(0, 0, 0)
 popup.Text = ""
-popup.Font = Enum.Font.SourceSansBold
+popup.Font = Enum.Font.GothamBold
 popup.TextSize = 20
 popup.Visible = false
 popup.BorderSizePixel = 0
 popup.TextScaled = true
+addUICorner(popup, 10)
 
 -- Function to show popup
 local function showPopup(message)
@@ -79,13 +90,15 @@ local autoOn = false
 
 freezeToggle.MouseButton1Click:Connect(function()
 	freezeOn = not freezeOn
-	freezeToggle.Text = "Freeze Trade: " .. (freezeOn and "ON" or "OFF")
+	freezeToggle.Text = (freezeOn and "❄️ Freeze Trade: ON" or "❄️ Freeze Trade: OFF")
+	freezeToggle.BackgroundColor3 = freezeOn and Color3.fromRGB(39, 174, 96) or Color3.fromRGB(60, 60, 60)
 	showPopup("User Froze Successfully")
 end)
 
 autoToggle.MouseButton1Click:Connect(function()
 	autoOn = not autoOn
-	autoToggle.Text = "Auto Accept: " .. (autoOn and "ON" or "OFF")
+	autoToggle.Text = (autoOn and "✅ Auto Accept: ON" or "✅ Auto Accept: OFF")
+	autoToggle.BackgroundColor3 = autoOn and Color3.fromRGB(41, 128, 185) or Color3.fromRGB(60, 60, 60)
 	if autoOn then
 		showPopup("Auto Accept Activated")
 	end
