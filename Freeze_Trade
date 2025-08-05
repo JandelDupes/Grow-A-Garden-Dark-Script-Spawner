@@ -1,0 +1,92 @@
+--// LocalScript - Place this in StarterPlayerScripts or load via loadstring
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+
+-- Create ScreenGui
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "GAG_TradeGUI"
+gui.ResetOnSpawn = false
+
+-- Main Frame
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 200, 0, 120)
+frame.Position = UDim2.new(0.05, 0, 0.4, 0)
+frame.BackgroundColor3 = Color3.fromRGB(52, 73, 94)
+frame.BorderSizePixel = 0
+frame.Name = "TradeOptions"
+frame.Active = true
+frame.Draggable = true
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "BLOXIFIED"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+
+-- Freeze Trade Toggle
+local freezeToggle = Instance.new("TextButton", frame)
+freezeToggle.Size = UDim2.new(0.9, 0, 0, 30)
+freezeToggle.Position = UDim2.new(0.05, 0, 0.35, 0)
+freezeToggle.Text = "Freeze Trade: OFF"
+freezeToggle.BackgroundColor3 = Color3.fromRGB(44, 62, 80)
+freezeToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+freezeToggle.Font = Enum.Font.SourceSans
+freezeToggle.TextSize = 16
+
+-- Auto Accept Toggle
+local autoToggle = Instance.new("TextButton", frame)
+autoToggle.Size = UDim2.new(0.9, 0, 0, 30)
+autoToggle.Position = UDim2.new(0.05, 0, 0.7, 0)
+autoToggle.Text = "Auto Accept: OFF"
+autoToggle.BackgroundColor3 = Color3.fromRGB(44, 62, 80)
+autoToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+autoToggle.Font = Enum.Font.SourceSans
+autoToggle.TextSize = 16
+
+-- Popup Label
+local popup = Instance.new("TextLabel", gui)
+popup.Size = UDim2.new(0.3, 0, 0.08, 0)
+popup.Position = UDim2.new(0.35, 0, 0.85, 0)
+popup.BackgroundColor3 = Color3.fromRGB(41, 128, 185)
+popup.TextColor3 = Color3.fromRGB(255, 255, 255)
+popup.Text = ""
+popup.Font = Enum.Font.SourceSansBold
+popup.TextSize = 20
+popup.Visible = false
+popup.BorderSizePixel = 0
+popup.TextScaled = true
+
+-- Function to show popup
+local function showPopup(message)
+	popup.Text = message
+	popup.Visible = true
+	TweenService:Create(popup, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
+	wait(2)
+	TweenService:Create(popup, TweenInfo.new(0.4), {BackgroundTransparency = 1}):Play()
+	wait(0.4)
+	popup.Visible = false
+	popup.BackgroundTransparency = 0
+end
+
+-- Toggle logic
+local freezeOn = false
+local autoOn = false
+
+freezeToggle.MouseButton1Click:Connect(function()
+	freezeOn = not freezeOn
+	freezeToggle.Text = "Freeze Trade: " .. (freezeOn and "ON" or "OFF")
+	showPopup("User Froze Successfully")
+end)
+
+autoToggle.MouseButton1Click:Connect(function()
+	autoOn = not autoOn
+	autoToggle.Text = "Auto Accept: " .. (autoOn and "ON" or "OFF")
+	if autoOn then
+		showPopup("Auto Accept Activated")
+	end
+end)
